@@ -36,6 +36,7 @@ from helpers import (evaluate_points, visualize_points, plot3dview,
                      draw_epipolar_lines, matchAndShowCorrespondence,
                      showCorrespondence, get_ground_truth)
 
+from student import estimate_fundamental_matrix_with_normalize
 
 def main(args):
 

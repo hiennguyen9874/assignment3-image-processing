@@ -75,7 +75,7 @@ def compute_camera_center(M):
 # 'Points_a' is nx2 matrix of 2D coordinate of points on Image A
 # 'Points_b' is nx2 matrix of 2D coordinate of points on Image B
 # 'F_matrix' is 3x3 fundamental matrix
-def estimate_fundamental_matrix(Points_a,Points_b):
+def estimate_fundamental_matrix(Points_a, Points_b):
     # Try to implement this function as efficiently as possible. It will be
     # called repeatly for part III of the project
     #                                            
@@ -113,6 +113,72 @@ def estimate_fundamental_matrix(Points_a,Points_b):
     F_matrix = U @ np.diagflat(S) @ Vh
 
     return F_matrix
+
+# Returns the camera center matrix for a given projection matrix
+# 'Points_a' is nx2 matrix of 2D coordinate of points on Image A
+# 'Points_b' is nx2 matrix of 2D coordinate of points on Image B
+# 'F_matrix' is 3x3 fundamental matrix
+def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
+    # Try to implement this function as efficiently as possible. It will be
+    # called repeatly for part III of the project
+    #                                            
+
+    #                                              [f11
+    # [u1u1' v1u1' u1' u1v1' v1v1' v1' u1 v1 1      f12     [0
+    #  u2u2' v2v2' u2' u2v2' v2v2' v2' u2 v2 1      f13      0
+    #  ...                                      *   ...  =  ...
+    #  ...                                          ...     ...
+    #  unun' vnun' un' unvn' vnvn' vn' un vn 1]     f32      0]
+    #                                               f33]     
+    
+    mean_a = Points_a.mean(axis=0)
+    mean_b = Points_b.mean(axis=0)
+    std_a = np.sqrt(np.mean(np.sum((Points_a-mean_a)**2, axis=1), axis=0))
+    std_b = np.sqrt(np.mean(np.sum((Points_b-mean_b)**2, axis=1), axis=0))
+
+    Ta1 = np.diagflat(np.array([np.sqrt(2)/std_a, np.sqrt(2)/std_a, 1]))
+    Ta2 = np.column_stack((np.row_stack((np.eye(2), [[0, 0]])), [-mean_a[0], -mean_a[1], 1]))
+
+    Tb1 = np.diagflat(np.array([np.sqrt(2)/std_b, np.sqrt(2)/std_b, 1]))
+    Tb2 = np.column_stack((np.row_stack((np.eye(2), [[0, 0]])), [-mean_b[0], -mean_b[1], 1]))
+    
+    Ta = np.matmul(Ta1, Ta2)
+    Tb = np.matmul(Tb1, Tb2)
+    
+    arr_a = np.column_stack((Points_a, [1]*Points_a.shape[0]))
+    arr_b = np.column_stack((Points_b, [1]*Points_b.shape[0]))
+
+    arr_a = np.matmul(Ta, arr_a.T)
+    arr_b = np.matmul(Tb, arr_b.T)
+
+    arr_a = arr_a.T
+    arr_b = arr_b.T
+
+    arr_a = np.tile(arr_a, 3)
+    arr_b = arr_b.repeat(3, axis=1)
+    A = np.multiply(arr_a, arr_b)
+
+    '''Solve f from Af=0'''
+    '''solution 1'''
+    U, s, V = np.linalg.svd(A)
+    F_matrix = V[-1]
+    F_matrix = np.reshape(F_matrix, (3,3))
+
+    '''solution 2'''
+    # b = A[:, 0].copy()
+    # F_matrix = np.linalg.lstsq(A[:, 1:], -b)[0]
+    # F_matrix = np.r_[1, F_matrix]
+    # F_matrix = F_matrix.reshape((3, 3))
+
+    '''Resolve det(F) = 0 constraint using SVD'''
+    U, S, Vh = np.linalg.svd(F_matrix)
+    S[-1] = 0
+    F_matrix = U @ np.diagflat(S) @ Vh
+
+    F_matrix = Tb.T @ F_matrix @ Ta
+
+    return F_matrix
+
 
 # Takes h, w to handle boundary conditions
 def apply_positional_noise(points, h, w, interval=3, ratio=0.2):
@@ -202,8 +268,8 @@ def ransac_fundamental_matrix(matches_a, matches_b):
     # Your ransac loop should contain a call to 'estimate_fundamental_matrix()'
     # that you wrote for part II.
 
-    num_iterator = 1500
-    threshold = 0.05 
+    num_iterator = 2000
+    threshold = 0.05
     best_F_matrix = np.zeros((3, 3))
     max_inlier = 0
     num_sample_rand = 9
