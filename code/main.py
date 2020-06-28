@@ -10,7 +10,7 @@
 # (4) Estimates the fundamental matrix                      (you code this)
 # (5) Adds noise to the points if asked                     (you code this)
 # (6) Estimates the fundamental matrix using RANSAC         (you code this)
-#     and filters away spurious matches                                    
+#     and filters away spurious matches
 # (7) Visualizes the F Matrix with homography rectification
 #
 # The relationship between coordinates in the world and coordinates in the
@@ -19,30 +19,29 @@
 # 2 pairs of corresponding points files are provided
 # Ground truth is provided for pts2d-norm-pic_a and pts3d-norm pair
 # You need to report the values calculated from pts2d-pic_b and pts3d
+from skimage import io
+from student import estimate_fundamental_matrix_with_normalize
+from helpers import (evaluate_points, visualize_points, plot3dview,
+                     draw_epipolar_lines, matchAndShowCorrespondence,
+                     showCorrespondence, get_ground_truth)
+from student import (calculate_projection_matrix, compute_camera_center,
+                     estimate_fundamental_matrix, ransac_fundamental_matrix,
+                     apply_positional_noise, apply_matching_noise)
+from scipy import misc
+import argparse
+import cv2
+import os
+import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-import numpy as np
-import os
-import cv2
-import argparse
-from skimage import io 
-from scipy import misc
-from student import (calculate_projection_matrix, compute_camera_center,
-                     estimate_fundamental_matrix, ransac_fundamental_matrix,
-                     apply_positional_noise, apply_matching_noise)
-from helpers import (evaluate_points, visualize_points, plot3dview,
-                     draw_epipolar_lines, matchAndShowCorrespondence,
-                     showCorrespondence, get_ground_truth)
-
-from student import estimate_fundamental_matrix_with_normalize
 
 def main(args):
 
     data_dir = os.path.dirname(__file__) + '/../data/'
 
-    ########## Parts (1) through (2)
+    # Parts (1) through (2)
     Points_2D = np.loadtxt(data_dir + 'pts2d-norm-pic_a.txt')
     Points_3D = np.loadtxt(data_dir + 'pts3d-norm.txt')
 
@@ -87,7 +86,7 @@ def main(args):
         draw_epipolar_lines(F_matrix, ImgLeft, ImgRight, Points_2D_pic_a,
                             Points_2D_pic_b)
 
-    ########## Parts (6) through (8)
+    # Parts (6) through (8)
     # This Mount Rushmore pair is easy. Most of the initial matches are
     # correct. The base fundamental matrix estimation without coordinate
     # normalization will work fine with RANSAC.
@@ -156,11 +155,12 @@ def main(args):
     if args.matching_ratio:
         print('Applying noise on matches')
         Points_2D_pic_a = apply_matching_noise(Points_2D_pic_a,
-                                                args.matching_ratio)
+                                               args.matching_ratio)
 
     if args.no_ransac:
         print('Not using RANSAC, estimation using estimate_fundamental_matrix')
-        F_matrix = estimate_fundamental_matrix(Points_2D_pic_a, Points_2D_pic_b)
+        F_matrix = estimate_fundamental_matrix(
+            Points_2D_pic_a, Points_2D_pic_b)
         matched_points_a = Points_2D_pic_a
         matched_points_b = Points_2D_pic_b
     else:
@@ -175,8 +175,10 @@ def main(args):
         pic_a = cv2.warpPerspective(pic_a, H, (pic_b.shape[1], pic_b.shape[0]))
         transformed_points_a = cv2.perspectiveTransform(
             matched_points_a.reshape(-1, 1, 2), H).squeeze(axis=1)
-        showCorrespondence(pic_a, pic_b, transformed_points_a, matched_points_b)
-        draw_epipolar_lines(F_matrix, pic_a, pic_b, transformed_points_a, matched_points_b)
+        showCorrespondence(
+            pic_a, pic_b, transformed_points_a, matched_points_b)
+        draw_epipolar_lines(F_matrix, pic_a, pic_b,
+                            transformed_points_a, matched_points_b)
 
 
 if __name__ == '__main__':
