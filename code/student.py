@@ -65,7 +65,6 @@ def calculate_projection_matrix(Points_2D, Points_3D):
 # 'M' is the 3x4 projection matrix
 # 'Center' is the 1x3 matrix of camera center location in world coordinates
 
-
 def compute_camera_center(M):
     # Replace this with the correct code
     # In the visualization you will see that this camera location is clearly
@@ -79,7 +78,6 @@ def compute_camera_center(M):
 # 'Points_a' is nx2 matrix of 2D coordinate of points on Image A
 # 'Points_b' is nx2 matrix of 2D coordinate of points on Image B
 # 'F_matrix' is 3x3 fundamental matrix
-
 
 def estimate_fundamental_matrix(Points_a, Points_b):
     # Try to implement this function as efficiently as possible. It will be
@@ -103,7 +101,7 @@ def estimate_fundamental_matrix(Points_a, Points_b):
 
     '''Solve f from Af=0'''
     '''solution 1'''
-    U, s, V = np.linalg.svd(A, full_matrices=False)
+    U, s, V = np.linalg.svd(A)
     F_matrix = V[-1]
     F_matrix = np.reshape(F_matrix, (3, 3))
 
@@ -124,7 +122,6 @@ def estimate_fundamental_matrix(Points_a, Points_b):
 # 'Points_a' is nx2 matrix of 2D coordinate of points on Image A
 # 'Points_b' is nx2 matrix of 2D coordinate of points on Image B
 # 'F_matrix' is 3x3 fundamental matrix
-
 
 def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
     # Try to implement this function as efficiently as possible. It will be
@@ -227,8 +224,6 @@ def apply_positional_noise(points, h, w, interval=3, ratio=0.2):
     return points
 
 # Apply noise to the matches.
-
-
 def apply_matching_noise(points, ratio=0.2):
     """ 
     The goal of this function to randomly shuffle the percentage of points given 
@@ -278,7 +273,7 @@ def ransac_fundamental_matrix(matches_a, matches_b):
     # Your ransac loop should contain a call to 'estimate_fundamental_matrix()'
     # that you wrote for part II.
 
-    num_iterator = 2000
+    num_iterator = 1500
     threshold = 0.005
     best_F_matrix = np.zeros((3, 3))
     max_inlier = 0
