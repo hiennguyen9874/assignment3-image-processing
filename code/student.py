@@ -38,6 +38,7 @@ def calculate_projection_matrix(Points_2D, Points_3D):
 
     # This M matrix came from a call to rand(3,4). It leads to a high residual.
     # Your total residual should be less than 1.
+    assert Points_2D.shape[0] == Points_3D.shape[0]
 
     arr = np.column_stack((Points_3D, [1]*Points_3D.shape[0]))
     A1 = np.concatenate((arr, np.zeros_like(arr)), axis=1).reshape((-1, 4))
@@ -90,6 +91,7 @@ def estimate_fundamental_matrix(Points_a, Points_b):
     #  ...                                          ...     ...
     #  unun' vnun' un' unvn' vnvn' vn' un vn 1]     f32      0]
     #                                               f33]
+    assert Points_a.shape[0] == Points_b.shape[0]
 
     arr_a = np.column_stack((Points_a, [1]*Points_a.shape[0]))
     arr_b = np.column_stack((Points_b, [1]*Points_b.shape[0]))
@@ -134,7 +136,8 @@ def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
     #  ...                                          ...     ...
     #  unun' vnun' un' unvn' vnvn' vn' un vn 1]     f32      0]
     #                                               f33]
-
+    assert Points_a.shape[0] == Points_b.shape[0]
+    
     mean_a = Points_a.mean(axis=0)
     mean_b = Points_b.mean(axis=0)
     std_a = np.sqrt(np.mean(np.sum((Points_a-mean_a)**2, axis=1), axis=0))
@@ -272,7 +275,7 @@ def ransac_fundamental_matrix(matches_a, matches_b):
     # Your ransac loop should contain a call to 'estimate_fundamental_matrix()'
     # that you wrote for part II.
 
-    num_iterator = 2000
+    num_iterator = 10000
     threshold = 0.002
     best_F_matrix = np.zeros((3, 3))
     max_inlier = 0

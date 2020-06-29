@@ -80,7 +80,7 @@ def main(args):
 
     # Calculate the fundamental matrix given corresponding point pairs
     # !!! You will need to implement estimate_fundamental_matrix. !!!
-    F_matrix = estimate_fundamental_matrix_with_normalize(Points_2D_pic_a, Points_2D_pic_b)
+    F_matrix = estimate_fundamental_matrix(Points_2D_pic_a, Points_2D_pic_b)
 
     # Draw the epipolar lines on the images
     if not args.no_vis:
@@ -176,7 +176,7 @@ def main(args):
         transformed_points_a = cv2.perspectiveTransform(
             matched_points_a.reshape(-1, 1, 2), H).squeeze(axis=1)
         showCorrespondence(pic_a, pic_b, transformed_points_a, matched_points_b)
-        # draw_epipolar_lines(F_matrix, pic_a, pic_b, transformed_points_a, matched_points_b)
+        draw_epipolar_lines(F_matrix, pic_a, pic_b, transformed_points_a, matched_points_b)
 
 
 if __name__ == '__main__':
