@@ -479,7 +479,6 @@ Fundamental Matrix:
     \caption{\emph{Left:} Left zoom, \emph{Right:} Right zoom}
 \end{figure}
 
-
 \textbf{Non-Normalized image coordinates}
 
 Fundamental Matrix:
@@ -528,7 +527,10 @@ Chi tiết hiện thực trong python/numpy:
 \inputpython{code/part3_1.py}{1}{27}
 
 \subsection*{Kết quả}
+\textbf{Sử dụng RANSAC}
+
 \textbf{mt\_rushmore}
+
 
 Noise ratio = 0.0
 \begin{figure}[H]
@@ -617,6 +619,57 @@ Noise ratio = 0.2
     \includegraphics[width=6.5cm]{images/part3/ransac_image_3_noise_0.2_left.png}
     \includegraphics[width=6.5cm]{images/part3/ransac_image_3_noise_0.2_right.png}
 \end{figure}
+
+\textbf{Không sử dụng RANSAC}
+
+Noise ratio = 0.1
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=14cm]{images/part3/no_ransac_image_1_noise_0.1_1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.1_left.png}
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.1_right.png}
+\end{figure}
+
+Noise ratio = 0.2
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=14cm]{images/part3/no_ransac_image_1_noise_0.2_1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.2_left.png}
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.2_right.png}
+\end{figure}
+
+Noise ratio = 0.3
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=14cm]{images/part3/no_ransac_image_1_noise_0.3_1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.3_left.png}
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.3_right.png}
+\end{figure}
+
+Noise ratio = 0.4
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=14cm]{images/part3/no_ransac_image_1_noise_0.4_1.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.4_left.png}
+    \includegraphics[width=6.5cm]{images/part3/no_ransac_image_1_noise_0.4_right.png}
+\end{figure}
+
 
 \textbf{Sử dụng ORB features}
 mt\_rushmore:

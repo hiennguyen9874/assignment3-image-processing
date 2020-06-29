@@ -12,19 +12,19 @@
             "console": "integratedTerminal",
             "args": [
                 "--image",
-                // "mt_rushmore",
+                "mt_rushmore",
                 // "notre_dame",
-                "gaudi",
+                // "gaudi",
                 "--positional-interval",
                 "3",
                 "--positional-ratio",
-                "0.0",
+                "0.4",
                 "--matching-ratio",
-                "0.0",
-                // "--hard_points",
+                "0.4",
+                "--hard_points",
                 // "--no-ransac",
                 // "--no-vis",
-                "--use-orb"
+                // "--use-orb"
             ]
         }
     ]
