@@ -12,7 +12,6 @@ from random import sample
 # 'Points_3D' is nx3 matrix of 3D coordinate of points in the world
 # 'M' is the 3x4 projection matrix
 
-
 def calculate_projection_matrix(Points_2D, Points_3D):
     # To solve for the projection matrix. You need to set up a system of
     # equations using the corresponding 2D and 3D points:
@@ -59,7 +58,6 @@ def calculate_projection_matrix(Points_2D, Points_3D):
     # M = M.reshape((3, 4))
     '''residual: 0.044548941765576305'''
 
-    M /= -np.linalg.norm(M)
     return M
 
 # Returns the camera center matrix for a given projection matrix
@@ -169,6 +167,7 @@ def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
     U, s, V = np.linalg.svd(A)
     F_matrix = V[-1]
     F_matrix = np.reshape(F_matrix, (3, 3))
+    F_matrix /= np.linalg.norm(F_matrix)
 
     '''solution 2'''
     # b = A[:, 0].copy()
@@ -182,7 +181,6 @@ def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
     F_matrix = U @ np.diagflat(S) @ Vh
 
     F_matrix = Tb.T @ F_matrix @ Ta
-
     return F_matrix
 
 
@@ -220,8 +218,7 @@ def apply_positional_noise(points, h, w, interval=3, ratio=0.2):
                             np.zeros((points.shape[0]-num_noise, 2))), axis=0)
     np.random.shuffle(noise)
     points = points + noise
-    points[:, 0] = np.clip(points[:, 0], 0, w)
-    points[:, 1] = np.clip(points[:, 1], 0, h)
+    points = points.clip([0, 0], [w, h])
     return points
 
 # Apply noise to the matches.
@@ -249,8 +246,9 @@ def apply_matching_noise(points, ratio=0.2):
     temp1 = points.copy()[temp == 1]
     np.random.shuffle(temp1)
 
-    for i in range(num_noise):
-        points[np.argwhere(temp == 1)[i]] = temp1[i]
+    # for i in range(num_noise):
+    #     points[np.argwhere(temp == 1)[i]] = temp1[i]
+    points[temp==1] = temp1
     return points
 
 
@@ -274,11 +272,11 @@ def ransac_fundamental_matrix(matches_a, matches_b):
     # Your ransac loop should contain a call to 'estimate_fundamental_matrix()'
     # that you wrote for part II.
 
-    num_iterator = 1500
-    threshold = 0.005
+    num_iterator = 2000
+    threshold = 0.002
     best_F_matrix = np.zeros((3, 3))
     max_inlier = 0
-    num_sample_rand = 9
+    num_sample_rand = 8
 
     xa = np.column_stack((matches_a, [1]*matches_a.shape[0]))
     xb = np.column_stack((matches_b, [1]*matches_b.shape[0]))
@@ -292,11 +290,11 @@ def ransac_fundamental_matrix(matches_a, matches_b):
         err = np.abs(np.matmul(A, F_matrix.reshape((-1))))
         current_inlier = np.sum(err <= threshold)
         if current_inlier > max_inlier:
-            best_F_matrix = F_matrix
+            best_F_matrix = F_matrix.copy()
             max_inlier = current_inlier
 
     err = np.abs(np.matmul(A, best_F_matrix.reshape((-1))))
     index = np.argsort(err)
     # print(best_F_matrix)
     # print(np.sum(err <= threshold), "/", err.shape[0])
-    return best_F_matrix, matches_a[index[:34]], matches_b[index[:34]]
+    return best_F_matrix, matches_a[index[:29]], matches_b[index[:29]]

@@ -12,8 +12,7 @@ import cv2
 import matplotlib.pyplot as plt
 from matplotlib.patches import ConnectionPatch
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib;
-# matplotlib.use('TkAgg')
+import matplotlib; matplotlib.use('TkAgg')
 
 ORB_NUM_POINTS = 3000
 
