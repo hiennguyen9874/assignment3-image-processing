@@ -58,7 +58,7 @@ def calculate_projection_matrix(Points_2D, Points_3D):
     # M = V[-1]
     # M = M.reshape((3, 4))
     '''residual: 0.044548941765576305'''
-
+    M /= -np.linalg.norm(M)
     return M
 
 # Returns the camera center matrix for a given projection matrix

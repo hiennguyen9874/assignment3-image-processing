@@ -18,13 +18,13 @@
                 "--positional-interval",
                 "3",
                 "--positional-ratio",
-                "0.0",
+                "0.2",
                 "--matching-ratio",
-                "0.0",
+                "0.2",
                 // "--hard_points",
                 // "--no-ransac",
                 // "--no-vis",
-                "--use-orb"
+                // "--use-orb"
             ]
         }
     ]
