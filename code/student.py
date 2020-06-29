@@ -82,7 +82,8 @@ def compute_camera_center(M):
 def estimate_fundamental_matrix(Points_a, Points_b):
     # Try to implement this function as efficiently as possible. It will be
     # called repeatly for part III of the project
-    #
+    
+    # x'^T.F.x = 0
 
     #                                              [f11
     # [u1u1' v1u1' u1' u1v1' v1v1' v1' u1 v1 1      f12     [0
@@ -126,7 +127,7 @@ def estimate_fundamental_matrix(Points_a, Points_b):
 def estimate_fundamental_matrix_with_normalize(Points_a, Points_b):
     # Try to implement this function as efficiently as possible. It will be
     # called repeatly for part III of the project
-    #
+    # x'^T.F.x = 0
 
     #                                              [f11
     # [u1u1' v1u1' u1' u1v1' v1v1' v1' u1 v1 1      f12     [0
